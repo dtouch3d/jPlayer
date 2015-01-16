@@ -26,15 +26,15 @@ package happyworm.jPlayer {
 	import flash.events.TimerEvent;
 
 	public class JplayerMp4 extends Sprite {
-		
+
 		public var myVideo:Video = new Video();
 		private var myConnection:NetConnection;
 		private var myStream:NetStream;
-		
+
 		private var myTransform:SoundTransform = new SoundTransform();
 
 		public var myStatus:JplayerStatus = new JplayerStatus();
-		
+
 		private var timeUpdateTimer:Timer = new Timer(250, 0); // Matched to HTML event freq
 		private var progressTimer:Timer = new Timer(250, 0); // Matched to HTML event freq
 		private var seekingTimer:Timer = new Timer(100, 0); // Internal: How often seeking is checked to see if it is over.
@@ -45,7 +45,7 @@ package happyworm.jPlayer {
 			myConnection.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
 			myVideo.smoothing = true;
 			this.addChild(myVideo);
-			
+
 			timeUpdateTimer.addEventListener(TimerEvent.TIMER, timeUpdateHandler);
 			progressTimer.addEventListener(TimerEvent.TIMER, progressHandler);
 			seekingTimer.addEventListener(TimerEvent.TIMER, seekingHandler);
@@ -276,7 +276,7 @@ package happyworm.jPlayer {
 				myStatus.isPlaying = false;
 				myStatus.pausePosition = myStream.time * 1000;
 			}
-			
+
 			if(!isNaN(time) && myStatus.srcSet) {
 				myStatus.pausePosition = time;
 			}
@@ -342,6 +342,7 @@ package happyworm.jPlayer {
 		}
 		public function getLoadRatio():Number {
 			if((myStatus.isLoading || myStatus.isLoaded) && myStream.bytesTotal > 0) {
+				if( myStream.bytesLoaded > 2048 ) return 1; //Hackfix for AAC+ streams. 2048 is just a randomly selected number.
 				return myStream.bytesLoaded / myStream.bytesTotal;
 			} else if (myStatus.isLoaded && myStream.bytesLoaded > 0) {
 				return 1;
